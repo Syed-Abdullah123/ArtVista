@@ -71,16 +71,18 @@ export default function LoginScreen({ navigation }: any) {
 
   return (
     <View style={styles.container}>
-      <SignupHeader
+      {/* <SignupHeader
         headerTitle="Sign In to Your Account"
         subtitle="Fill in all the fields below"
-      />
+      /> */}
+      <Text style={styles.title}>Sign In to Your Account</Text>
+      <Text style={styles.subtitle}>Fill in all the fields below</Text>
       <View style={styles.inputs}>
         <View style={styles.input}>
-          <Feather name="mail" size={20} color="#fff" style={styles.icon} />
+          <Feather name="mail" size={18} color="#aaa" style={styles.icon} />
           <TextInput
             placeholder="Enter email"
-            placeholderTextColor="#fff"
+            placeholderTextColor="#aaa"
             style={styles.textInput}
             value={email}
             onChangeText={setEmail}
@@ -89,10 +91,10 @@ export default function LoginScreen({ navigation }: any) {
           />
         </View>
         <View style={styles.input}>
-          <Feather name="lock" size={20} color="#fff" style={styles.icon} />
+          <Feather name="lock" size={18} color="#aaa" style={styles.icon} />
           <TextInput
             placeholder="Enter password"
-            placeholderTextColor="#fff"
+            placeholderTextColor="#aaa"
             style={styles.textInput}
             value={password}
             onChangeText={setPassword}
@@ -135,32 +137,43 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#302C28",
     paddingHorizontal: 20,
+    paddingVertical: 40,
   },
-  text: {
+  title: {
+    fontFamily: "Erode_Bold",
+    fontSize: 32,
     color: "#fff",
+    marginTop: 30,
+  },
+  subtitle: {
+    fontFamily: "Recia_Regular",
+    fontSize: 16,
+    color: "#ccc",
+    marginVertical: 10,
   },
   inputs: {
     width: "100%",
     gap: 25,
-    marginTop: 20,
+    marginTop: "25%",
   },
   input: {
-    width: 325,
+    width: "100%",
     height: 57,
-    padding: 10,
     borderColor: "#fff",
     borderWidth: 1,
     borderRadius: 5,
     flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
   },
   icon: {
-    padding: 8,
     marginRight: 10,
   },
   textInput: {
     flex: 1,
     fontFamily: "Recia_Regular",
     color: "#fff",
+    fontSize: 15,
   },
   accountText: {
     flexDirection: "row",
