@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "ArtVista",
+    "slug": "ArtVista",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/artvista2.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/artvista2.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#302C28"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/artvista2.png",
+        "backgroundColor": "#302C28"
+      },
+      "package": "com.ArtVista.ArtVista"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "81718949-707b-4c28-a2c6-0f7bb789b112"
+      }
+    }
+  }
+}

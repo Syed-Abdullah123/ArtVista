@@ -1,0 +1,72 @@
+const dummyArts = [
+  {
+    id: 1,
+    title: "Can you hear me?",
+    author: "Zack Smith",
+    likes: 24,
+    comments: 12,
+    shares: 5,
+    description:
+      "This artwork explores the theme of modern isolation, blending vibrant colors with abstract shapes to convey a sense of detachment and longing.",
+    medium: "Oil on Canvas",
+    dimensions: "24 x 36 inches",
+    date: "22 Nov, 2023",
+    location: "ArtVista Gallery, New York",
+    image: require("../../assets/images/art.jpg"), // Update the path as necessary
+    authorImage: require("../../assets/images/artvista1.png"),
+    hashtags: "#art #modern #abstract #isolation #loneliness #colorful",
+  },
+  {
+    id: 2,
+    title: "Colors of the Wind",
+    author: "Sarah Lee",
+    likes: 48,
+    comments: 20,
+    shares: 10,
+    description:
+      "An exquisite representation of the harmony between nature and humanity using bold strokes and a vibrant palette.",
+    medium: "Acrylic on Canvas",
+    dimensions: "18 x 24 inches",
+    date: "13 Mar, 2023",
+    location: "Oceanic Art Museum, California",
+    image: require("../../assets/images/art2.jpg"),
+    authorImage: require("../../assets/images/artvista1.png"),
+    hashtags: "#art #nature #abstract #isolation #loneliness #colorful",
+  },
+  {
+    id: 3,
+    title: "Eternal Light",
+    author: "Liam Carter",
+    likes: 36,
+    comments: 15,
+    shares: 20,
+    description:
+      "A surreal depiction of hope and renewal, capturing the essence of light piercing through darkness in a chaotic world.",
+    medium: "Watercolor on Paper",
+    dimensions: "20 x 30 inches",
+    date: "23 Oct, 2024",
+    location: "Beacon Art Exhibit, London",
+    image: require("../../assets/images/art3.jpg"),
+    authorImage: require("../../assets/images/artvista1.png"),
+    hashtags: "#art #surreal #abstract #isolation #loneliness #colorful",
+  },
+  {
+    id: 4,
+    title: "Whispering Shadows",
+    author: "Amelia Rivera",
+    likes: 58,
+    comments: 25,
+    shares: 24,
+    description:
+      "A mysterious artwork blending shades of black and grey with subtle hints of gold, symbolizing secrets hidden in the shadows.",
+    medium: "Charcoal and Gold Leaf",
+    dimensions: "22 x 28 inches",
+    date: "11 Aug, 2021",
+    location: "Golden Art Museum, Paris",
+    image: require("../../assets/images/art4.jpg"),
+    authorImage: require("../../assets/images/artvista1.png"),
+    hashtags: "#art #surreal #abstract #isolation #loneliness #colorful",
+  },
+];
+
+export default dummyArts;
