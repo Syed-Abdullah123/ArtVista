@@ -98,26 +98,24 @@ export default function SignupScreen({ navigation }: any) {
         onConfirm={handleAlertConfirm}
         confirmText={alertDetails.confirmText}
       />
-      <SignupHeader
-        headerTitle="Sign Up to Create Account"
-        subtitle="Fill in all the fields below"
-      />
+      <Text style={styles.title}>Sign Up to Create Account</Text>
+      <Text style={styles.subtitle}>Fill in all the fields below</Text>
       <View style={styles.inputs}>
         <View style={styles.input}>
-          <Feather name="user" size={20} color="#fff" style={styles.icon} />
+          <Feather name="user" size={18} color="#aaa" style={styles.icon} />
           <TextInput
             placeholder="Enter username"
-            placeholderTextColor="#fff"
+            placeholderTextColor="#aaa"
             style={styles.textInput}
             value={username}
             onChangeText={setUsername}
           />
         </View>
         <View style={styles.input}>
-          <Feather name="mail" size={20} color="#fff" style={styles.icon} />
+          <Feather name="mail" size={18} color="#aaa" style={styles.icon} />
           <TextInput
             placeholder="Enter email"
-            placeholderTextColor="#fff"
+            placeholderTextColor="#aaa"
             style={styles.textInput}
             value={email}
             onChangeText={setEmail}
@@ -126,10 +124,10 @@ export default function SignupScreen({ navigation }: any) {
           />
         </View>
         <View style={styles.input}>
-          <Feather name="lock" size={20} color="#fff" style={styles.icon} />
+          <Feather name="lock" size={18} color="#aaa" style={styles.icon} />
           <TextInput
             placeholder="Enter password"
-            placeholderTextColor="#fff"
+            placeholderTextColor="#aaa"
             style={styles.textInput}
             value={password}
             onChangeText={setPassword}
@@ -137,10 +135,10 @@ export default function SignupScreen({ navigation }: any) {
           />
         </View>
         <View style={styles.input}>
-          <Feather name="lock" size={20} color="#fff" style={styles.icon} />
+          <Feather name="lock" size={18} color="#aaa" style={styles.icon} />
           <TextInput
             placeholder="Rewrite Password"
-            placeholderTextColor="#fff"
+            placeholderTextColor="#aaa"
             style={styles.textInput}
             value={confirmPassword}
             onChangeText={setConfirmPassword}
@@ -171,9 +169,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#302C28",
     paddingHorizontal: 20,
+    paddingVertical: 40,
   },
-  text: {
+  title: {
+    fontFamily: "Erode_Bold",
+    fontSize: 32,
     color: "#fff",
+    marginTop: 30,
+  },
+  subtitle: {
+    fontFamily: "Recia_Regular",
+    fontSize: 16,
+    color: "#ccc",
+    marginVertical: 10,
   },
   inputs: {
     width: "100%",
@@ -181,22 +189,23 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   input: {
-    width: 325,
+    width: "100%",
     height: 57,
-    padding: 10,
     borderColor: "#fff",
     borderWidth: 1,
     borderRadius: 5,
     flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
   },
   icon: {
-    padding: 5,
     marginRight: 10,
   },
   textInput: {
     fontFamily: "Recia_Regular",
     flex: 1,
     color: "#fff",
+    fontSize: 15,
   },
   accountText: {
     flexDirection: "row",
