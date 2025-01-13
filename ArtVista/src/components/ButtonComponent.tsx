@@ -31,12 +31,19 @@ const ButtonComponent: React.FC<ButonProps> = ({
       style={[styles.outerContainer, containerStyle]}
       onPress={onPress}
     >
-      {!loading ? (
+      {/* {!loading ? (
         <View style={[styles.container, buttonStyle]}>
           <Text style={[styles.buttonText, textStyle]}>{title}</Text>
         </View>
       ) : (
         <ActivityIndicator size="small" color="#fff" />
+      )} */}
+      {loading ? (
+        <ActivityIndicator size="small" color="#fff" />
+      ) : (
+        <View style={[styles.container, buttonStyle]}>
+          <Text style={[styles.buttonText, textStyle]}>{title}</Text>
+        </View>
       )}
     </TouchableOpacity>
   );
