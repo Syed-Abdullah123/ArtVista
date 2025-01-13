@@ -1,4 +1,5 @@
 import React from "react";
+import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
 import StackNavigator from "./src/navigation/StackNavigator";
 
@@ -17,6 +18,7 @@ export default function App() {
   return (
     <>
       <StackNavigator />
+      <StatusBar style="light" backgroundColor="#302C28" />
     </>
   );
 }
