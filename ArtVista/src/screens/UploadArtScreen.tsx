@@ -11,6 +11,7 @@ import {
   Pressable,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import { Ionicons, MaterialIcons, Feather } from "@expo/vector-icons";
 import ButtonComponent from "../components/ButtonComponent";
 
 import { FIREBASE_AUTH, FIREBASE_DB } from "../../firebaseConfig";
@@ -103,81 +104,91 @@ const UploadArtScreen = ({ navigation, route }: any) => {
           </View>
         ) : (
           <View style={styles.innerContainer}>
+            <Ionicons name="camera" size={42} color="#302C28" />
             <Text style={styles.imagePickerText}>Pick an Image</Text>
           </View>
         )}
       </Pressable>
       <View style={styles.inputContainer}>
         <Text style={styles.inputTitle}>Title:</Text>
-        <TextInput
-          style={styles.textInput}
-          value={title}
-          onChangeText={setTitle}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.inputTitle}>Author:</Text>
-        <TextInput
-          style={styles.textInput}
-          value={author}
-          onChangeText={setAuthor}
-        />
+        <View style={styles.textInput}>
+          <MaterialIcons name="title" size={20} color="#aaa" />
+          <TextInput
+            style={styles.input}
+            value={title}
+            onChangeText={setTitle}
+          />
+        </View>
       </View>
       <View style={styles.inputContainer}>
         <Text style={styles.inputTitle}>Description:</Text>
-        <TextInput
-          style={[styles.textInput, styles.textArea]}
-          multiline
-          value={description}
-          onChangeText={setDescription}
-        />
+        <View style={styles.textInput}>
+          <MaterialIcons name="subtitles" size={20} color="#aaa" />
+          <TextInput
+            style={[styles.textArea, styles.input]}
+            multiline
+            value={description}
+            onChangeText={setDescription}
+          />
+        </View>
       </View>
       <View style={styles.inputContainer}>
         <Text style={styles.inputTitle}>Medium (e.g., Oil on Canvas):</Text>
-        <TextInput
-          style={styles.textInput}
-          value={medium}
-          onChangeText={setMedium}
-        />
+        <View style={styles.textInput}>
+          <MaterialIcons name="format-paint" size={20} color="#aaa" />
+          <TextInput
+            style={styles.input}
+            value={medium}
+            onChangeText={setMedium}
+          />
+        </View>
       </View>
       <View style={styles.inputContainer}>
         <Text style={styles.inputTitle}>
           Dimensions (e.g., 24 x 36 inches):
         </Text>
-        <TextInput
-          style={styles.textInput}
-          value={dimensions}
-          onChangeText={setDimensions}
-        />
+        <View style={styles.textInput}>
+          <MaterialIcons name="area-chart" size={20} color="#aaa" />
+          <TextInput
+            style={styles.input}
+            value={dimensions}
+            onChangeText={setDimensions}
+          />
+        </View>
       </View>
       <View style={styles.inputContainer}>
         <Text style={styles.inputTitle}>Date:</Text>
-        <TextInput
-          style={styles.textInput}
-          value={date}
-          onChangeText={setDate}
-        />
+        <View style={styles.textInput}>
+          <MaterialIcons name="calendar-month" size={20} color="#aaa" />
+          <TextInput style={styles.input} value={date} onChangeText={setDate} />
+        </View>
       </View>
       <View style={styles.inputContainer}>
         <Text style={styles.inputTitle}>
           Location (e.g., ArtVista Gallery, NY):
         </Text>
-        <TextInput
-          style={styles.textInput}
-          value={location}
-          onChangeText={setLocation}
-        />
+        <View style={styles.textInput}>
+          <MaterialIcons name="location-on" size={20} color="#aaa" />
+          <TextInput
+            style={styles.input}
+            value={location}
+            onChangeText={setLocation}
+          />
+        </View>
       </View>
       <View style={styles.inputContainer}>
         <Text style={styles.inputTitle}>
           Hashtags (e.g., #art #painting #canvas):
         </Text>
-        <TextInput
-          style={styles.textInput}
-          value={hashtags}
-          onChangeText={setHashtags}
-          multiline
-        />
+        <View style={styles.textInput}>
+          <Feather name="hash" size={20} color="#aaa" />
+          <TextInput
+            style={styles.input}
+            value={hashtags}
+            onChangeText={setHashtags}
+            multiline
+          />
+        </View>
       </View>
 
       <ButtonComponent title="Submit" onPress={handleSubmit} />
@@ -213,6 +224,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   imagePickerText: {
+    fontFamily: "Recia_Medium",
     color: "#302C28",
     fontSize: 16,
     textAlign: "center",
@@ -231,28 +243,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   textInput: {
-    fontFamily: "Recia_Regular",
     width: "100%",
-    padding: 10,
+    height: 40,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
     marginBottom: 15,
-    color: "#fff",
     borderWidth: 1,
     borderColor: "#ccc",
+  },
+  input: {
+    flex: 1,
+    color: "#fff",
+    fontFamily: "Recia_Regular",
   },
   textArea: {
     height: 100,
     textAlignVertical: "top",
-  },
-  submitButton: {
-    backgroundColor: "#0066CC",
-    padding: 15,
-    borderRadius: 8,
-    width: "100%",
-    alignItems: "center",
-  },
-  submitButtonText: {
-    color: "#fff",
-    fontSize: 16,
   },
 });
 
