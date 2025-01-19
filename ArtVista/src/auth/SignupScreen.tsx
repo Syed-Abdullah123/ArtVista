@@ -6,6 +6,7 @@ import {
   TextInput,
   Pressable,
   Alert,
+  ScrollView,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import SignupHeader from "../components/SignupHeader";
@@ -89,7 +90,7 @@ export default function SignupScreen({ navigation }: any) {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <AlertComponent
         visible={alertVisible}
         title={alertDetails.title}
@@ -160,7 +161,7 @@ export default function SignupScreen({ navigation }: any) {
           <Text style={styles.text2}>Sign In</Text>
         </Pressable>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
