@@ -4,7 +4,6 @@ import {
   Text,
   View,
   TextInput,
-  TouchableOpacity,
   Image,
   ScrollView,
   Alert,
@@ -121,11 +120,22 @@ const UploadArtScreen = ({ navigation, route }: any) => {
         </View>
       </View>
       <View style={styles.inputContainer}>
+        <Text style={styles.inputTitle}>Author:</Text>
+        <View style={styles.textInput}>
+          <MaterialIcons name="account-circle" size={20} color="#aaa" />
+          <TextInput
+            style={styles.input}
+            value={author}
+            onChangeText={setAuthor}
+          />
+        </View>
+      </View>
+      <View style={styles.inputContainer}>
         <Text style={styles.inputTitle}>Description:</Text>
         <View style={styles.textInput}>
           <MaterialIcons name="subtitles" size={20} color="#aaa" />
           <TextInput
-            style={[styles.textArea, styles.input]}
+            style={styles.input}
             multiline
             value={description}
             onChangeText={setDescription}
@@ -191,7 +201,7 @@ const UploadArtScreen = ({ navigation, route }: any) => {
         </View>
       </View>
 
-      <ButtonComponent title="Submit" onPress={handleSubmit} />
+      <ButtonComponent title={"Upload Artwork"} onPress={handleSubmit} />
     </ScrollView>
   );
 };
