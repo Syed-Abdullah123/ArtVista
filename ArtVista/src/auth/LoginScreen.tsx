@@ -6,6 +6,7 @@ import {
   TextInput,
   Pressable,
   Alert,
+  ScrollView,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import SignupHeader from "../components/SignupHeader";
@@ -70,7 +71,7 @@ export default function LoginScreen({ navigation }: any) {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {/* <SignupHeader
         headerTitle="Sign In to Your Account"
         subtitle="Fill in all the fields below"
@@ -105,6 +106,7 @@ export default function LoginScreen({ navigation }: any) {
       <ButtonComponent
         title="Sign In"
         onPress={handleLogin}
+        // onPress={() => navigation.navigate("Tabs")}
         containerStyle={{ marginTop: "17%" }}
       />
       <View style={styles.accountText}>
@@ -128,7 +130,7 @@ export default function LoginScreen({ navigation }: any) {
           visible={alertVisible}
         />
       )}
-    </View>
+    </ScrollView>
   );
 }
 
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
   inputs: {
     width: "100%",
     gap: 25,
-    marginTop: "25%",
+    marginTop: "20%",
   },
   input: {
     width: "100%",
