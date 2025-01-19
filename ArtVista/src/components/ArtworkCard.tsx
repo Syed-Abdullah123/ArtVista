@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderColor: "#fff",
     margin: 10,
+    borderRadius: 3,
   },
   innerContainer: {
     borderWidth: 1,
@@ -80,6 +81,7 @@ const styles = StyleSheet.create({
     bottom: 6,
     right: 6,
     backgroundColor: "white",
+    borderRadius: 3,
   },
   image: {
     width: "100%",
