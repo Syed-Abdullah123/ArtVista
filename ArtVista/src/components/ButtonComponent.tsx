@@ -11,14 +11,18 @@ import {
   ActivityIndicator,
 } from "react-native";
 
-type ButonProps = {
+type ButtonProps = {
   title: string;
-  onPress: (event: GestureResponderEvent) => void;
+  onPress: (
+    event: GestureResponderEvent,
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>
+  ) => void;
   containerStyle?: StyleProp<ViewStyle>;
   buttonStyle?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
 };
-const ButtonComponent: React.FC<ButonProps> = ({
+
+const ButtonComponent: React.FC<ButtonProps> = ({
   title,
   onPress,
   containerStyle,
@@ -26,25 +30,31 @@ const ButtonComponent: React.FC<ButonProps> = ({
   textStyle,
 }) => {
   const [loading, setLoading] = useState(false);
+
+  const handlePress = (event: GestureResponderEvent) => {
+    if (!loading) {
+      setLoading(true);
+      onPress(event, setLoading); // Pass `setLoading` to manage the async state
+    }
+  };
+
   return (
     <TouchableOpacity
-      style={[styles.outerContainer, containerStyle]}
-      onPress={onPress}
+      style={[
+        styles.outerContainer,
+        containerStyle,
+        loading && styles.disabledContainer,
+      ]}
+      onPress={handlePress}
+      disabled={loading}
     >
-      {/* {!loading ? (
-        <View style={[styles.container, buttonStyle]}>
+      <View style={[styles.container, buttonStyle]}>
+        {!loading ? (
           <Text style={[styles.buttonText, textStyle]}>{title}</Text>
-        </View>
-      ) : (
-        <ActivityIndicator size="small" color="#fff" />
-      )} */}
-      {loading ? (
-        <ActivityIndicator size="small" color="#fff" />
-      ) : (
-        <View style={[styles.container, buttonStyle]}>
-          <Text style={[styles.buttonText, textStyle]}>{title}</Text>
-        </View>
-      )}
+        ) : (
+          <ActivityIndicator size="small" color="#302C28" />
+        )}
+      </View>
     </TouchableOpacity>
   );
 };
@@ -72,6 +82,9 @@ const styles = StyleSheet.create({
     fontFamily: "Recia_Bold",
     fontSize: 20,
     textAlign: "center",
+  },
+  disabledContainer: {
+    backgroundColor: "#555",
   },
 });
 
