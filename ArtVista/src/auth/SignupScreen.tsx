@@ -64,13 +64,13 @@ export default function SignupScreen({ navigation }: any) {
         createdAt: new Date().toISOString(),
       });
 
-      setAlertDetails({
-        title: "Account Created!",
-        message:
-          "Your account has been successfully created. You can now log in and start using the app.",
-        confirmText: "Go to Login",
-      });
-      setAlertVisible(true);
+      // setAlertDetails({
+      //   title: "Account Created!",
+      //   message:
+      //     "Your account has been successfully created. You can now log in and start using the app.",
+      //   confirmText: "Go to Login",
+      // });
+      // setAlertVisible(true);
       navigation.navigate("Login");
     } catch (error: any) {
       setAlertDetails({
