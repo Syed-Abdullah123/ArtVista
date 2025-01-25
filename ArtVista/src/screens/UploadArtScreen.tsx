@@ -13,8 +13,13 @@ import * as ImagePicker from "expo-image-picker";
 import { Ionicons, MaterialIcons, Feather } from "@expo/vector-icons";
 import ButtonComponent from "../components/ButtonComponent";
 
-import { FIREBASE_AUTH, FIREBASE_DB } from "../../firebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  FIREBASE_AUTH,
+  FIREBASE_DB,
+  FIREBASE_STORAGE,
+} from "../../firebaseConfig";
 
 const UploadArtScreen = ({ navigation, route }: any) => {
   const [title, setTitle] = useState("");
@@ -70,6 +75,19 @@ const UploadArtScreen = ({ navigation, route }: any) => {
     }
 
     try {
+      // Upload image to Firebase Storage
+      const response = await fetch(image); // Fetch the image from the local URI
+      const blob = await response.blob(); // Convert it to a blob
+
+      const storageRef = ref(
+        FIREBASE_STORAGE,
+        `artworks/${currentUser.uid}/${Date.now()}`
+      );
+      await uploadBytes(storageRef, blob);
+
+      // Get the download URL for the uploaded image
+      const downloadUrl = await getDownloadURL(storageRef);
+
       const artworkId = `${currentUser.uid}_${Date.now()}`;
       const newArt = {
         title,
@@ -80,10 +98,11 @@ const UploadArtScreen = ({ navigation, route }: any) => {
         date,
         location,
         hashtags,
-        imageUrl: image, // Upload image to storage and use the URL
-        userId: currentUser.uid,
+        imageUrl: downloadUrl, // Use the URL from Firebase Storage
+        userId: currentUser.uid, // Ensure this field is set
       };
 
+      // Save the artwork data to Firestore
       await setDoc(doc(FIREBASE_DB, "artworks", artworkId), newArt);
 
       Alert.alert("Success", "Artwork uploaded successfully!");
