@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
+  FlatList,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,31 +15,12 @@ import ArtworkCard from "../components/ArtworkCard";
 
 import { collection, onSnapshot } from "firebase/firestore";
 import { FIREBASE_DB } from "../../firebaseConfig";
+import { useArt } from "../contexts/ArtContext";
 
 export default function GalleryScreen({ navigation }: any) {
-  const [arts, setArts] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Set up Firestore real-time listener
-    const unsubscribe = onSnapshot(
-      collection(FIREBASE_DB, "artworks"),
-      (snapshot) => {
-        const artworks = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setArts(artworks);
-        setLoading(false);
-      },
-      (error) => {
-        console.error("Error listening to artworks:", error);
-        setLoading(false);
-      }
-    );
-
-    return () => unsubscribe(); // Clean up listener on component unmount
-  }, []);
+  const { arts, loading } = useArt();
+  // const [arts, setArts] = useState([]);
+  // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const backAction = () => {
@@ -92,6 +74,15 @@ export default function GalleryScreen({ navigation }: any) {
             <ArtworkCard item={item} key={item.id} navigation={navigation} />
           ))}
         </ScrollView>
+        // <FlatList
+        //   data={arts}
+        //   keyExtractor={(item) => item.id}
+        //   renderItem={({ item }) => (
+        //     <ArtworkCard item={item} navigation={navigation} />
+        //   )}
+        //   showsVerticalScrollIndicator={false}
+        //   contentContainerStyle={styles.container}
+        // />
       )}
       {/* Floating Action Button */}
       <TouchableOpacity
