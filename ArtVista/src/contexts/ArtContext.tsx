@@ -9,8 +9,10 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { FIREBASE_DB, FIREBASE_AUTH } from "../../firebaseConfig";
+import { onAuthStateChanged, User } from "firebase/auth";
 
 interface Comment {
+  id?: string;
   userId: string;
   username: string;
   userImage: string | null;
@@ -28,7 +30,7 @@ interface Art {
   likes: number;
   likesArray: string[];
   commentsArray: Comment[];
-  [key: string]: any; // for other properties
+  [key: string]: any;
 }
 
 interface ArtContextType {
@@ -40,6 +42,7 @@ interface ArtContextType {
   getComments: (artId: string) => Comment[];
   isLikeLoading: { [key: string]: boolean };
   isCommentLoading: { [key: string]: boolean };
+  currentUser: User | null;
 }
 
 const ArtContext = createContext<ArtContextType | undefined>(undefined);
@@ -55,7 +58,16 @@ export const ArtProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isCommentLoading, setIsCommentLoading] = useState<{
     [key: string]: boolean;
   }>({});
-  const user = FIREBASE_AUTH.currentUser;
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  // Listen to auth state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
+      setCurrentUser(user);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -78,7 +90,7 @@ export const ArtProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const toggleLike = async (artId: string) => {
-    if (!user) return;
+    if (!currentUser) return;
 
     try {
       setIsLikeLoading((prev) => ({ ...prev, [artId]: true }));
@@ -89,11 +101,13 @@ export const ArtProvider: React.FC<{ children: React.ReactNode }> = ({
         const artworkData = artworkDoc.data();
         const likesArray = artworkData?.likesArray || [];
         const currentLikes = artworkData?.likes || 0;
-        const userLiked = likesArray.includes(user.uid);
+        const userLiked = likesArray.includes(currentUser.uid);
 
         await updateDoc(artworkRef, {
           likes: userLiked ? currentLikes - 1 : currentLikes + 1,
-          likesArray: userLiked ? arrayRemove(user.uid) : arrayUnion(user.uid),
+          likesArray: userLiked
+            ? arrayRemove(currentUser.uid)
+            : arrayUnion(currentUser.uid),
         });
       }
     } catch (error) {
@@ -104,11 +118,11 @@ export const ArtProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const addComment = async (artId: string, text: string) => {
-    if (!user || !text.trim()) return;
+    if (!currentUser || !text.trim()) return;
 
     try {
       setIsCommentLoading((prev) => ({ ...prev, [artId]: true }));
-      const userRef = doc(FIREBASE_DB, "users", user.uid);
+      const userRef = doc(FIREBASE_DB, "users", currentUser.uid);
       const userSnap = await getDoc(userRef);
       const userData = userSnap.exists()
         ? userSnap.data()
@@ -116,7 +130,8 @@ export const ArtProvider: React.FC<{ children: React.ReactNode }> = ({
 
       const artworkRef = doc(FIREBASE_DB, "artworks", artId);
       const newComment = {
-        userId: user.uid,
+        id: `${currentUser.uid}-${Date.now()}`, // Create a unique ID
+        userId: currentUser.uid,
         username: userData.username,
         userImage: userData.userImage || null,
         text: text.trim(),
@@ -134,9 +149,9 @@ export const ArtProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const isLiked = (artId: string): boolean => {
-    if (!user) return false;
+    if (!currentUser) return false;
     const art = arts.find((a) => a.id === artId);
-    return art?.likesArray?.includes(user.uid) || false;
+    return art?.likesArray?.includes(currentUser.uid) || false;
   };
 
   const getComments = (artId: string): Comment[] => {
@@ -155,6 +170,7 @@ export const ArtProvider: React.FC<{ children: React.ReactNode }> = ({
         getComments,
         isLikeLoading,
         isCommentLoading,
+        currentUser,
       }}
     >
       {children}
