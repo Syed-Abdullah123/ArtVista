@@ -93,7 +93,7 @@ export default function ProfileScreen({ navigation }: any) {
   // Default values for stats if no data available yet
   const totalLikes = userUploadedArts.reduce((sum, art) => sum + art.likes, 0);
   const totalComments = userUploadedArts.reduce(
-    (sum, art) => sum + art.comments,
+    (sum, art) => sum + (art.commentsArray?.length || 0),
     0
   );
   const totalUploads = userUploadedArts.length;
