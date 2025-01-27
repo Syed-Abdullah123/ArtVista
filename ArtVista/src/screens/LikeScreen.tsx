@@ -8,72 +8,68 @@ import {
   TouchableOpacity,
   ToastAndroid,
   Pressable,
+  ActivityIndicator,
 } from "react-native";
-
-// Dummy data for liked artworks
-const DUMMY_ARTWORKS = [
-  {
-    id: "1",
-    title: "Mountains in Background",
-    medium: "Brush Paint",
-    date: "18 January 2025",
-    author: "Anonymous",
-    location: "Palestine",
-    imageUrl: require("../../assets/images/art2.jpg"), // Replace with your asset image path
-  },
-  {
-    id: "2",
-    title: "Sunset Over Mountains",
-    medium: "Oil on Canvas",
-    date: "12 March 2024",
-    author: "John Doe",
-    location: "Switzerland",
-    imageUrl: require("../../assets/images/art3.jpg"), // Replace with your asset image path
-  },
-  {
-    id: "3",
-    title: "Abstract Chaos",
-    medium: "Acrylic",
-    date: "25 July 2023",
-    author: "Jane Smith",
-    location: "New York",
-    imageUrl: require("../../assets/images/art4.jpg"), // Replace with your asset image path
-  },
-];
+import { useArt } from "../contexts/ArtContext";
 
 export default function LikeScreen({ navigation }) {
+  const { arts, isLiked, loading } = useArt();
+
   const handleArtPress = (art) => {
-    ToastAndroid.show(`Selected: ${art.title}`, ToastAndroid.SHORT);
+    navigation.navigate("ArtDetails", { item: art });
   };
+
+  // Filter only the liked artworks
+  const likedArts = arts.filter((art) => isLiked(art.id));
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#fff" />
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    );
+  }
+
+  if (likedArts.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>No liked artworks yet!</Text>
+      </View>
+    );
+  }
+
+  const renderArtwork = ({ item }) => (
+    <Pressable
+      style={styles.outerContainer}
+      onPress={() => handleArtPress(item)}
+    >
+      <View style={styles.innerContainer}>
+        <ImageBackground
+          source={{ uri: item.imageUrl }}
+          style={styles.artImage}
+        >
+          <View style={styles.overlay}>
+            <Text style={styles.artTitle} numberOfLines={1}>
+              {item.title}
+            </Text>
+            <Text style={styles.artInfo}>
+              {item.medium} • {item.date}
+            </Text>
+            <Text style={styles.artInfo}>By: {item.author}</Text>
+          </View>
+        </ImageBackground>
+      </View>
+    </Pressable>
+  );
 
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.headerText}>Liked Artworks</Text> */}
-
       <FlatList
-        data={DUMMY_ARTWORKS}
+        data={likedArts}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
-        renderItem={({ item }) => (
-          <Pressable
-            style={styles.outerContainer}
-            onPress={() => handleArtPress(item)}
-          >
-            <View style={styles.innerContainer}>
-              <ImageBackground source={item.imageUrl} style={styles.artImage}>
-                <View style={styles.overlay}>
-                  <Text style={styles.artTitle} numberOfLines={1}>
-                    {item.title}
-                  </Text>
-                  <Text style={styles.artInfo}>
-                    {item.medium} • {item.date}
-                  </Text>
-                  <Text style={styles.artInfo}>By: {item.author}</Text>
-                </View>
-              </ImageBackground>
-            </View>
-          </Pressable>
-        )}
+        renderItem={renderArtwork}
         showsVerticalScrollIndicator={false}
       />
     </View>
@@ -132,5 +128,27 @@ const styles = StyleSheet.create({
     fontFamily: "Recia_Regular",
     fontSize: 13,
     color: "#ccc",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#302C28",
+  },
+  loadingText: {
+    fontFamily: "Recia_Regular",
+    fontSize: 16,
+    color: "#fff",
+    marginTop: 10,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#302C28",
+  },
+  emptyText: {
+    fontFamily: "Recia_Regular",
+    fontSize: 18,
   },
 });
