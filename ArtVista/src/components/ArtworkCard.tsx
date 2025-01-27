@@ -1,8 +1,21 @@
-import { StyleSheet, Text, View, Image, Pressable } from "react-native";
 import React from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Pressable,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { Ionicons, Feather, FontAwesome } from "@expo/vector-icons";
+import { useArt } from "../contexts/ArtContext";
 
 const ArtworkCard = ({ navigation, item }: any) => {
+  const { isLiked, toggleLike, getComments, isLikeLoading } = useArt();
+  const liked = isLiked(item.id);
+  const comments = getComments(item.id);
+
   return (
     <Pressable
       style={styles.outerContainer}
@@ -33,16 +46,26 @@ const ArtworkCard = ({ navigation, item }: any) => {
 
             {/* User Interactions Section */}
             <View style={styles.interactions}>
-              <View style={styles.interaction}>
-                <Feather name="thumbs-up" size={18} color="#302C28" />
-                <Text style={styles.interactionText}>
-                  {item.likes || 0} {/* Default to 0 if missing */}
-                </Text>
-              </View>
+              <TouchableOpacity
+                style={styles.interaction}
+                onPress={() => toggleLike(item.id)}
+                disabled={isLikeLoading[item.id]}
+              >
+                {isLikeLoading[item.id] ? (
+                  <ActivityIndicator size="small" color="#302C28" />
+                ) : (
+                  <FontAwesome
+                    name={liked ? "thumbs-up" : "thumbs-o-up"}
+                    size={18}
+                    color={liked ? "green" : "#302C28"}
+                  />
+                )}
+                <Text style={styles.interactionText}>{item.likes || 0}</Text>
+              </TouchableOpacity>
               <View style={styles.interaction}>
                 <FontAwesome name="commenting-o" size={18} color="#302C28" />
                 <Text style={styles.interactionText}>
-                  {item.comments || 0} {/* Default to 0 if missing */}
+                  {comments.length || 0} {/* Default to 0 if missing */}
                 </Text>
               </View>
               <View style={styles.interaction}>
