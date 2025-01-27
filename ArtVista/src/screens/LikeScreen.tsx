@@ -150,5 +150,6 @@ const styles = StyleSheet.create({
   emptyText: {
     fontFamily: "Recia_Regular",
     fontSize: 18,
+    color: "#fff",
   },
 });
