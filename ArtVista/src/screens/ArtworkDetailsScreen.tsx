@@ -9,136 +9,48 @@ import {
   Modal,
   TextInput,
   FlatList,
+  ActivityIndicator,
+  LogBox,
 } from "react-native";
-import { Ionicons, Feather, FontAwesome } from "@expo/vector-icons";
-import { FIREBASE_AUTH, FIREBASE_DB } from "../../firebaseConfig";
-import {
-  doc,
-  getDoc,
-  updateDoc,
-  arrayUnion,
-  arrayRemove,
-} from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { FontAwesome } from "@expo/vector-icons";
+import { FIREBASE_AUTH } from "../../firebaseConfig";
+import { useArt } from "../contexts/ArtContext";
 
 const ArtworkDetailsScreen = ({ route }: any) => {
   const { item } = route.params;
+  const {
+    toggleLike,
+    addComment,
+    isLiked: getIsLiked,
+    getComments,
+    isLikeLoading,
+    isCommentLoading,
+  } = useArt();
 
-  // State for likes and comments
-  const [likes, setLikes] = useState(item.likes);
-  const [isLiked, setIsLiked] = useState(false);
-  const [comments, setComments] = useState(item.commentsArray || []);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newComment, setNewComment] = useState("");
+
+  // Get current values from context
+  const liked = getIsLiked(item.id);
+  const comments = getComments(item.id);
+  const isLikeLoadingForThis = isLikeLoading[item.id];
+  const isCommentLoadingForThis = isCommentLoading[item.id];
 
   // Track user authentication state
   const user = FIREBASE_AUTH.currentUser;
 
-  useEffect(() => {
-    // Check if the user has already liked this artwork
-    const hasLiked = item.likesArray?.includes(user?.uid);
-    setIsLiked(hasLiked);
-  }, [item.likesArray, user]);
-
-  // Toggle like status
-  const toggleLike = async () => {
-    const auth = getAuth(); // Get the current authenticated user
-    const user = auth.currentUser;
-
-    if (user) {
-      try {
-        const artworkRef = doc(FIREBASE_DB, "artworks", item.id); // Referencing artwork document
-        const artworkDoc = await getDoc(artworkRef); // Get current artwork document
-        if (artworkDoc.exists()) {
-          const artworkData = artworkDoc.data();
-          const likesArray = artworkData?.likesArray || [];
-          const currentLikes = artworkData?.likes || 0;
-
-          // Check if the user has already liked the artwork
-          const userLiked = likesArray.includes(user.uid);
-
-          // Update Firestore with the toggled like state
-          await updateDoc(artworkRef, {
-            likes: userLiked ? currentLikes - 1 : currentLikes + 1,
-            likesArray: userLiked
-              ? arrayRemove(user.uid)
-              : arrayUnion(user.uid),
-          });
-
-          // Update local state
-          setLikes(userLiked ? likes - 1 : likes + 1);
-          setIsLiked(!userLiked);
-        }
-      } catch (error) {
-        console.error("Error updating like:", error);
-      }
-    }
+  const handleLike = () => {
+    toggleLike(item.id);
   };
 
-  useEffect(() => {
-    const fetchLikeStatus = async () => {
-      const auth = getAuth();
-      const user = auth.currentUser;
-
-      if (user) {
-        try {
-          const artworkRef = doc(FIREBASE_DB, "artworks", item.id);
-          const artworkDoc = await getDoc(artworkRef);
-
-          if (artworkDoc.exists()) {
-            const artworkData = artworkDoc.data();
-            const likesArray = artworkData?.likesArray || [];
-            const userLiked = likesArray.includes(user.uid);
-
-            setLikes(artworkData?.likes || 0); // Set initial likes count
-            setIsLiked(userLiked); // Set the like status
-          }
-        } catch (error) {
-          console.error("Error fetching like status:", error);
-        }
-      }
-    };
-
-    fetchLikeStatus();
-  }, [item.id]); // Refetch when the artwork ID changes
-
-  // Add a new comment
-  const addComment = async () => {
+  const handleAddComment = async () => {
     if (newComment.trim().length > 0) {
-      const auth = getAuth();
-      const user = auth.currentUser;
-
-      if (user) {
-        try {
-          // Fetch user data from Firestore
-          const userRef = doc(FIREBASE_DB, "users", user.uid);
-          const userSnap = await getDoc(userRef);
-
-          const userData = userSnap.exists()
-            ? userSnap.data()
-            : { username: "Anonymous", userImage: null };
-
-          const artworkRef = doc(FIREBASE_DB, "artworks", item.id);
-          const newCommentData = {
-            userId: user.uid,
-            username: userData.username, // Fetched username
-            userImage: userData.userImage || null, // Fetched user image
-            text: newComment.trim(),
-            timestamp: new Date(),
-          };
-
-          await updateDoc(artworkRef, {
-            commentsArray: arrayUnion(newCommentData),
-          });
-
-          setComments((prev: any) => [...prev, newCommentData]);
-          setNewComment("");
-        } catch (error) {
-          console.error("Error adding comment:", error);
-        }
-      }
+      await addComment(item.id, newComment);
+      setNewComment(""); // Clear input only after successful post
     }
   };
+
+  LogBox.ignoreLogs(["Encountered two children with the same key"]);
 
   return (
     <ScrollView style={styles.container}>
@@ -170,13 +82,23 @@ const ArtworkDetailsScreen = ({ route }: any) => {
 
       {/* Artwork Interactions */}
       <View style={styles.interactions}>
-        <TouchableOpacity style={styles.interaction} onPress={toggleLike}>
-          <FontAwesome
-            name={isLiked ? "thumbs-up" : "thumbs-o-up"}
-            size={22}
-            color={isLiked ? "green" : "#fff"}
-          />
-          <Text style={styles.interactionText}>{likes} Likes</Text>
+        <TouchableOpacity
+          style={styles.interaction}
+          onPress={handleLike}
+          disabled={isLikeLoadingForThis}
+        >
+          {isLikeLoadingForThis ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <>
+              <FontAwesome
+                name={liked ? "thumbs-up" : "thumbs-o-up"}
+                size={22}
+                color={liked ? "green" : "#fff"}
+              />
+              <Text style={styles.interactionText}>{item.likes} Likes</Text>
+            </>
+          )}
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.interaction}
@@ -262,10 +184,18 @@ const ArtworkDetailsScreen = ({ route }: any) => {
                 multiline
               />
               <TouchableOpacity
-                style={styles.commentButton}
-                onPress={addComment}
+                style={[
+                  styles.commentButton,
+                  isCommentLoadingForThis && styles.commentButtonDisabled,
+                ]}
+                onPress={handleAddComment}
+                disabled={isCommentLoadingForThis || !newComment.trim()}
               >
-                <Text style={styles.commentButtonText}>Post</Text>
+                {isCommentLoadingForThis ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={styles.commentButtonText}>Post</Text>
+                )}
               </TouchableOpacity>
             </View>
             <TouchableOpacity
@@ -464,6 +394,9 @@ const styles = StyleSheet.create({
   commentButtonText: {
     fontFamily: "Recia_Bold",
     color: "#fff",
+  },
+  commentButtonDisabled: {
+    opacity: 1,
   },
   closeButton: {
     alignItems: "center",
