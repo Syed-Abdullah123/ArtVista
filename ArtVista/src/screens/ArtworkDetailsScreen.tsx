@@ -13,12 +13,12 @@ import {
   LogBox,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-import { FIREBASE_AUTH } from "../../firebaseConfig";
 import { useArt } from "../contexts/ArtContext";
 
 const ArtworkDetailsScreen = ({ route }: any) => {
   const { item } = route.params;
   const {
+    arts,
     toggleLike,
     addComment,
     isLiked: getIsLiked,
@@ -30,27 +30,25 @@ const ArtworkDetailsScreen = ({ route }: any) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newComment, setNewComment] = useState("");
 
-  // Get current values from context
-  const liked = getIsLiked(item.id);
-  const comments = getComments(item.id);
-  const isLikeLoadingForThis = isLikeLoading[item.id];
-  const isCommentLoadingForThis = isCommentLoading[item.id];
+  // Get the latest art data from context
+  const currentArtwork = arts.find((art) => art.id === item.id) || item;
 
-  // Track user authentication state
-  const user = FIREBASE_AUTH.currentUser;
+  // Get current values from context
+  const liked = getIsLiked(currentArtwork.id);
+  const comments = getComments(currentArtwork.id);
+  const isLikeLoadingForThis = isLikeLoading[currentArtwork.id];
+  const isCommentLoadingForThis = isCommentLoading[currentArtwork.id];
 
   const handleLike = () => {
-    toggleLike(item.id);
+    toggleLike(currentArtwork.id);
   };
 
   const handleAddComment = async () => {
     if (newComment.trim().length > 0) {
-      await addComment(item.id, newComment);
+      await addComment(currentArtwork.id, newComment);
       setNewComment(""); // Clear input only after successful post
     }
   };
-
-  LogBox.ignoreLogs(["Encountered two children with the same key"]);
 
   return (
     <ScrollView style={styles.container}>
@@ -58,25 +56,25 @@ const ArtworkDetailsScreen = ({ route }: any) => {
       <View style={styles.outerContainer}>
         <View style={styles.innerContainer}>
           <Image
-            source={{ uri: item.imageUrl }} // Replace with item.image if dynamic
+            source={{ uri: currentArtwork.imageUrl }} // Replace with item.image if dynamic
             style={styles.artImage}
           />
         </View>
       </View>
 
       {/* Artwork Title and Author */}
-      <Text style={styles.title}>{item.title}</Text>
+      <Text style={styles.title}>{currentArtwork.title}</Text>
       <View style={styles.header}>
         <Image
           source={
-            item.authorImage
-              ? { uri: item.authorImage }
-              : require("../../assets/images/artvista2.png") // Fallback for missing author image
+            currentArtwork.authorImage
+              ? { uri: currentArtwork.authorImage }
+              : require("../../assets/images/artvista2.png")
           }
           style={styles.userImage}
         />
         <Text style={styles.author}>
-          {item.author} . {item.date}
+          {currentArtwork.author} . {currentArtwork.date}
         </Text>
       </View>
 
@@ -96,7 +94,9 @@ const ArtworkDetailsScreen = ({ route }: any) => {
                 size={22}
                 color={liked ? "green" : "#fff"}
               />
-              <Text style={styles.interactionText}>{item.likes} Likes</Text>
+              <Text style={styles.interactionText}>
+                {currentArtwork.likes} Likes
+              </Text>
             </>
           )}
         </TouchableOpacity>
@@ -112,7 +112,7 @@ const ArtworkDetailsScreen = ({ route }: any) => {
       {/* Artwork Description */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Description</Text>
-        <Text style={styles.description}>{item.description}</Text>
+        <Text style={styles.description}>{currentArtwork.description}</Text>
       </View>
 
       {/* Comments Section */}
@@ -125,12 +125,12 @@ const ArtworkDetailsScreen = ({ route }: any) => {
           </Text>
         ) : (
           comments.slice(-3).map((comment: any, index: number) => (
-            <View key={comment.id || index} style={styles.commentSection}>
+            <View key={`recent-comment-${index}`} style={styles.commentSection}>
               <View style={styles.userInfo}>
                 <Image
                   source={
-                    item.authorImage
-                      ? { uri: item.authorImage }
+                    currentArtwork.authorImage
+                      ? { uri: currentArtwork.authorImage }
                       : require("../../assets/images/artvista2.png")
                   }
                   style={styles.userImage}
@@ -158,7 +158,7 @@ const ArtworkDetailsScreen = ({ route }: any) => {
             <Text style={styles.modalTitle}>All Comments</Text>
             <FlatList
               data={comments}
-              keyExtractor={(index) => index.toString()}
+              keyExtractor={(item, index) => `modal-${index}-${item.timestamp}`}
               renderItem={({ item }) => (
                 <View style={styles.commentSection}>
                   <View style={styles.userInfo}>
@@ -173,6 +173,7 @@ const ArtworkDetailsScreen = ({ route }: any) => {
                   <Text style={styles.commentText}>{item.text}</Text>
                 </View>
               )}
+              showsVerticalScrollIndicator={false}
             />
             <View style={styles.newCommentSection}>
               <TextInput
@@ -212,16 +213,19 @@ const ArtworkDetailsScreen = ({ route }: any) => {
       <View style={[styles.section, { marginTop: 10 }]}>
         <Text style={styles.sectionTitle}>Additional Details</Text>
         <Text style={styles.details}>
-          Medium: <Text style={styles.detailsText}>{item.medium}</Text>
+          Medium:{" "}
+          <Text style={styles.detailsText}>{currentArtwork.medium}</Text>
         </Text>
         <Text style={styles.details}>
-          Dimensions: <Text style={styles.detailsText}>{item.dimensions}</Text>
+          Dimensions:{" "}
+          <Text style={styles.detailsText}>{currentArtwork.dimensions}</Text>
         </Text>
         <Text style={styles.details}>
-          Date: <Text style={styles.detailsText}>{item.date}</Text>
+          Date: <Text style={styles.detailsText}>{currentArtwork.date}</Text>
         </Text>
         <Text style={styles.details}>
-          Location: <Text style={styles.detailsText}>{item.location}</Text>
+          Location:{" "}
+          <Text style={styles.detailsText}>{currentArtwork.location}</Text>
         </Text>
       </View>
 
@@ -229,7 +233,7 @@ const ArtworkDetailsScreen = ({ route }: any) => {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Hashtags</Text>
         <View style={styles.hashtagsContainer}>
-          <Text style={styles.hashtag}>{item.hashtags}</Text>
+          <Text style={styles.hashtag}>{currentArtwork.hashtags}</Text>
         </View>
       </View>
 
