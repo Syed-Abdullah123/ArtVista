@@ -98,6 +98,28 @@ export default function ProfileScreen({ navigation }: any) {
   );
   const totalUploads = userUploadedArts.length;
 
+  const renderItem = ({ item }: any) => {
+    return (
+      <TouchableOpacity
+        style={styles.artCard}
+        onPress={() => handleArtPress(item)}
+      >
+        <Image source={{ uri: item.imageUrl }} style={styles.artImage} />
+        <View style={styles.artDetails}>
+          <Text style={styles.artTitle} numberOfLines={1}>
+            {item.title}
+          </Text>
+          <Text style={styles.artInfo}>
+            {item.medium} • {item.date}
+          </Text>
+          <Text style={styles.artInfo}>
+            Likes: {item.likes} • Comments: {item.commentsArray?.length || 0}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <View style={styles.container}>
       {/* User Profile */}
@@ -143,25 +165,7 @@ export default function ProfileScreen({ navigation }: any) {
           keyExtractor={(item) => item.id.toString()}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.artworksList}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.artCard}
-              onPress={() => handleArtPress(item)}
-            >
-              <Image source={{ uri: item.imageUrl }} style={styles.artImage} />
-              <View style={styles.artDetails}>
-                <Text style={styles.artTitle} numberOfLines={1}>
-                  {item.title}
-                </Text>
-                <Text style={styles.artInfo}>
-                  {item.medium} • {item.date}
-                </Text>
-                <Text style={styles.artInfo}>
-                  Likes: {item.likes} • Comments: {item.comments}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          )}
+          renderItem={renderItem}
         />
       )}
     </View>
